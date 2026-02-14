@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Will you be my Valentine? 💞</title>
+  <!-- Elegant fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@300;400&family=Dancing+Script:wght@500..700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #ffd9df 0%, #ffc9b5 100%);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 1rem;
+    }
+
+    /* floating heart particles (default) */
+    .heart-particle {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      font-size: 1.2rem;
+      opacity: 0.4;
+      color: #ffa5a5;
+      animation: floatUp linear infinite;
+      z-index: 0;
+    }
+
+    /* apology particles (tears / sad symbols) */
+    .apology-particle {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      font-size: 1.4rem;
+      opacity: 0;
+      color: #9e7b7b;
+      animation: floatUp linear infinite;
+      z-index: 0;
+      transition: opacity 1.5s;
+    }
+    .apology-particle.show {
+      opacity: 0.35;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+      50% { opacity: 0.5; }
+      100% { transform: translateY(-120vh) rotate(8deg); opacity: 0; }
+    }
+
+    /* main card */
+    .card {
+      background: rgba(255, 250, 245, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px 24px 48px 24px;
+      box-shadow: 0 30px 50px rgba(230, 120, 100, 0.15), 0 10px 25px rgba(255, 215, 205, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+      width: 100%;
+      max-width: 620px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      border: 1px solid rgba(255, 245, 240, 0.5);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(1.9rem, 8vw, 2.8rem);
+      color: #552e2e;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.35rem;
+      text-shadow: 2px 2px 8px rgba(255, 220, 200, 0.5);
+    }
+
+    .cursive-sub {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.6rem, 7vw, 2.2rem);
+      color: #994d4d;
+      margin-bottom: 2.5rem;
+      font-weight: 500;
+      border-bottom: 1px dashed rgba(200, 120, 100, 0.3);
+      display: inline-block;
+      padding-bottom: 0.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      transition: opacity 0.5s ease, transform 0.4s ease;
+    }
+
+    .btn {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+      font-size: 1.4rem;
+      padding: 0.8rem 2.2rem;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(200, 120, 100, 0.2);
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      min-width: 140px;
+      background: white;
+    }
+
+    .btn-yes {
+      background: #f9b8b0;
+      color: #4d2e2a;
+      border: 1px solid #ffcfc1;
+      box-shadow: 0 10px 18px #fcc6b3;
+    }
+
+    .btn-yes:hover {
+      background: #ffb3a5;
+      transform: scale(1.05);
+      box-shadow: 0 14px 24px #fbaa9a, 0 0 0 2px rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-no {
+      background: #eae3df;
+      color: #5a4a44;
+      border: 1px solid #d6c9c2;
+      box-shadow: 0 6px 14px #cfbcb2;
+      transition: transform 0.25s ease, opacity 0.25s ease, background 0.2s;
+    }
+
+    .btn-no.sad-click {
+      transition: transform 0.2s cubic-bezier(0.2, 1.2, 0.8, 1.2), background 0.15s;
+      background: #f1cfc0;
+      z-index: 20;
+    }
+
+    /* visibility */
+    .hidden {
+      display: none !important;
+    }
+
+    /* proposal section */
+    .proposal-section {
+      margin-top: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .message-box {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.3rem, 5vw, 1.8rem);
+      line-height: 1.6;
+      color: #452121;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 1.8rem 1.5rem;
+      border-radius: 32px 16px 32px 16px;
+      box-shadow: inset 0 1px 8px rgba(255, 255, 255, 0.8), 0 12px 22px rgba(170, 120, 100, 0.1);
+      margin-bottom: 2rem;
+      width: 100%;
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .continue-btn {
+      background: transparent;
+      border: 1px solid #cc8f80;
+      color: #873e3e;
+      font-size: 1.3rem;
+      padding: 0.7rem 2.5rem;
+      border-radius: 60px;
+      font-weight: 300;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(230, 170, 150, 0.2);
+      backdrop-filter: blur(4px);
+      margin: 0.5rem 0 1.8rem;
+      animation: softPulse 2.2s infinite;
+    }
+
+    .continue-btn:hover {
+      background: #fceae5;
+      border-color: #b67263;
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px #f3cfc2;
+    }
+
+    @keyframes softPulse {
+      0% { box-shadow: 0 0 0 0 rgba(220, 140, 120, 0.3); }
+      70% { box-shadow: 0 0 0 12px rgba(220, 140, 120, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 140, 120, 0); }
+    }
+
+    /* crying section (for No path) */
+    .crying-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .crying-animation {
+      position: relative;
+      font-size: 6rem;
+      line-height: 1;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 10px 12px rgba(160, 100, 90, 0.2));
+    }
+
+    .crying-face {
+      display: inline-block;
+      animation: sadShake 3s infinite ease-in-out;
+    }
+
+    @keyframes sadShake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(3deg); }
+      75% { transform: rotate(-3deg); }
+    }
+
+    .tear {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      background: rgba(174, 194, 224, 0.6);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      animation: fall 2.2s infinite;
+      box-shadow: 0 0 6px #b0d0ff;
+    }
+
+    .tear:nth-child(2) {
+      left: 35%;
+      top: 45%;
+      animation-delay: 0.4s;
+      width: 10px;
+      height: 10px;
+      opacity: 0.7;
+    }
+
+    .tear:nth-child(3) {
+      left: 65%;
+      top: 45%;
+      animation-delay: 0.9s;
+      width: 14px;
+      height: 14px;
+      opacity: 0.5;
+    }
+
+    @keyframes fall {
+      0% { transform: rotate(-45deg) translate(0, 0); opacity: 0.8; }
+      80% { transform: rotate(-45deg) translate(20px, 40px); opacity: 0.3; }
+      100% { transform: rotate(-45deg) translate(30px, 60px); opacity: 0; }
+    }
+
+    .try-again-btn {
+      background: transparent;
+      border: 2px solid #bc9b91;
+      color: #5e3a33;
+      font-size: 1.6rem;
+      font-family: 'Dancing Script', cursive;
+      padding: 0.8rem 2.8rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 14px rgba(180, 130, 110, 0.2);
+      margin-top: 1rem;
+    }
+
+    .try-again-btn:hover {
+      background: #fff1ea;
+      border-color: #b08274;
+      transform: scale(1.05);
+      box-shadow: 0 12px 22px #e2bcb0;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1rem; }
+      .btn { font-size: 1.2rem; min-width: 120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <!-- main initial content (heading + buttons) -->
+    <div id="mainInitialContent">
+      <h1>Will You Be My Valentine? 💞</h1>
+      <div class="cursive-sub">My Love, will you be my Valentine?</div>
+      <div id="buttonsContainer" class="button-group">
+        <button class="btn btn-yes" id="yesBtn">Yes 💘</button>
+        <button class="btn btn-no" id="noBtn">No</button>
+      </div>
+    </div>
+
+    <!-- proposal area (for Yes path) -->
+    <div id="proposalArea" class="proposal-section hidden">
+      <div id="messageDisplay" class="message-box"></div>
+      <button id="continueBtn" class="continue-btn">Continue →</button>
+    </div>
+
+    <!-- crying section (for No path) -->
+    <div id="cryingSection" class="crying-section hidden">
+      <div class="crying-animation">
+        <span class="crying-face">😭</span>
+        <div class="tear"></div>
+        <div class="tear"></div>
+      </div>
+      <button class="try-again-btn" id="tryAgainBtn">Try again</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // floating hearts (default background)
+      for (let i = 0; i < 18; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-particle';
+        const hearts = ['❤️', '💖', '💕', '🌸', '🌹', '✨', '❤️', '💗'];
+        heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.fontSize = (0.7 + Math.random() * 1.1) + 'rem';
+        heart.style.animationDuration = (8 + Math.random() * 20) + 's';
+        heart.style.animationDelay = Math.random() * 15 + 's';
+        heart.style.opacity = 0.15 + Math.random() * 0.2;
+        document.body.appendChild(heart);
+      }
+
+      // create apology particles (hidden initially)
+      function createApologyParticles() {
+        const symbols = ['😢', '💔', '🥀', '😿', '💧', '🌧️', '😔', '💦'];
+        for (let i = 0; i < 20; i++) {
+          const p = document.createElement('div');
+          p.className = 'apology-particle';
+          p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+          p.style.left = Math.random() * 100 + '%';
+          p.style.fontSize = (1.0 + Math.random() * 1.6) + 'rem';
+          p.style.animationDuration = (10 + Math.random() * 20) + 's';
+          p.style.animationDelay = Math.random() * 10 + 's';
+          p.style.opacity = '0'; // hidden initially
+          document.body.appendChild(p);
+        }
+      }
+      createApologyParticles();
+
+      function showApologyParticles() {
+        const particles = document.querySelectorAll('.apology-particle');
+        particles.forEach(p => p.classList.add('show'));
+        // optional: also change background gradient slightly
+        document.body.style.background = 'linear-gradient(145deg, #f2d0d0 0%, #e5b8aa 100%)';
+      }
+
+      // DOM elements
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const mainContent = document.getElementById('mainInitialContent');
+      const proposalArea = document.getElementById('proposalArea');
+      const cryingSection = document.getElementById('cryingSection');
+      const messageDisplay = document.getElementById('messageDisplay');
+      const continueBtn = document.getElementById('continueBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+
+      // Romantic messages
+      const messages = [
+        "তোমার 'হ্যাঁ' শুনে হৃদয় আমার গেয়ে উঠলো গান, আকাশ জুড়ে ফুটলো ফুল, রঙিন হয়ে গেল প্রাণ 🌸💖 তুমি আমার ভ্যালেন্টাইন, স্বপ্নের রাজকন্যা তুমি ✨🥰❤️",
+        "তোমার চোখে চাঁদের আলো, ঠোঁটে ফুটেছে হাসির ফুল, একটা হাসিতে আমার দুনিয়া হয়ে যায় পূর্ণিমার চাঁদ 🌙😘 হাতে হাত রেখে চলবো আমরা, ভালোবাসার এই পথে 🌹💕",
+        "খালি ছিল বুকের কোণে একটা ছোট্ট ঘর, তুমি এলে আলো হয়ে, ভরে দিলে সব অন্ধকার 💔➡️❤️ এখন প্রতি ধুকপুকে তোমার নামের সুর বাজে 🥰💞🌟",
+        "তোমার চুলের ঢেউয়ে লুকিয়ে আছে আমার স্বপ্নের ঝড়, চোখের তারায় জ্বলে উঠে প্রেমের আলোর মশাল 🌌💫 তুমি না থাকলে জীবনটা শুধু ছায়ার খেলা 🌸😍💖",
+        "পৃথিবীর লক্ষ তারার মাঝে তুমিই আমার সবচেয়ে উজ্জ্বল, হৃদয়ের গভীরে লিখে রাখলাম তোমার নাম অমর অক্ষরে 🍀❤️ চিরকাল এভাবে কাছে থেকো, হাত ধরে হাঁটবো দুজনে 💑✨🥰🌹"
+      ];
+
+      // Apology message (new final)
+      const apologyMessage = "আমি আপনাকে চিনি না বা জানি না। আমি ভেবেছিলাম আপনি আমার বন্ধুর ফেইক আইডি, তাই মজা করে একটি অশ্রীল শব্দ ব্যবহার করেছি। এর জন্য আন্তরিকভাবে দুঃখিত। 😢💔";
+
+      let currentMessageIndex = 0; // 0..4, then 5 for apology
+
+      // --- NO button playful evasion + sad click leading to crying screen ---
+      noBtn.addEventListener('mouseenter', function() {
+        const cardRect = document.getElementById('card').getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const maxX = (cardRect.width - btnRect.width) * 0.5;
+        const maxY = (cardRect.height - btnRect.height) * 0.3;
+        const randomX = (Math.random() - 0.5) * maxX * 1.4;
+        const randomY = (Math.random() - 0.5) * maxY * 1.2;
+        noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        noBtn.style.opacity = '0.65';
+        noBtn.style.transition = 'transform 0.25s ease, opacity 0.2s';
+      });
+
+      noBtn.addEventListener('mouseleave', function() {
+        noBtn.style.transform = '';
+        noBtn.style.opacity = '';
+      });
+
+      noBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!mainContent.contains(noBtn) || mainContent.classList.contains('hidden')) return;
+
+        // playful sad jump
+        const originalText = noBtn.innerText;
+        const cardRect = document.getElementById('card').getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const maxX = (cardRect.width - btnRect.width) * 0.5;
+        const maxY = (cardRect.height - btnRect.height) * 0.3;
+        const randomX = (Math.random() - 0.5) * maxX * 1.8;
+        const randomY = (Math.random() - 0.5) * maxY * 1.8;
+        const randomRotate = (Math.random() - 0.5) * 10;
+
+        noBtn.classList.add('sad-click');
+        noBtn.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg) scale(1.05)`;
+        noBtn.style.background = '#f1cfc0';
+        noBtn.innerText = '😢';
+
+        // after short delay, transition to crying screen
+        setTimeout(() => {
+          mainContent.classList.add('hidden');
+          proposalArea.classList.add('hidden');
+          cryingSection.classList.remove('hidden');
+          noBtn.classList.remove('sad-click');
+          noBtn.style.transform = '';
+          noBtn.style.background = '';
+          noBtn.innerText = originalText;
+        }, 400);
+      });
+
+      // Try again: return to main screen
+      tryAgainBtn.addEventListener('click', function() {
+        cryingSection.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+        proposalArea.classList.add('hidden');
+        currentMessageIndex = 0;
+      });
+
+      // --- YES button click handler ---
+      yesBtn.addEventListener('click', function() {
+        const buttons = document.getElementById('buttonsContainer');
+        buttons.style.transition = 'opacity 0.5s';
+        buttons.style.opacity = '0';
+        setTimeout(() => {
+          mainContent.classList.add('hidden');
+          proposalArea.classList.remove('hidden');
+          // start first message
+          messageDisplay.style.opacity = '0';
+          messageDisplay.style.transform = 'translateY(18px)';
+          messageDisplay.innerText = messages[0];
+          currentMessageIndex = 0;
+          setTimeout(() => {
+            messageDisplay.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            messageDisplay.style.opacity = '1';
+            messageDisplay.style.transform = 'translateY(0)';
+          }, 30);
+          continueBtn.classList.remove('hidden');
+          buttons.style.opacity = '1';
+        }, 500);
+      });
+
+      // --- Continue button (through poems then apology) ---
+      continueBtn.addEventListener('click', function() {
+        if (currentMessageIndex < messages.length - 1) {
+          // next romantic message
+          currentMessageIndex++;
+          messageDisplay.style.opacity = '0';
+          messageDisplay.style.transform = 'translateY(18px)';
+          setTimeout(() => {
+            messageDisplay.innerText = messages[currentMessageIndex];
+            messageDisplay.style.opacity = '1';
+            messageDisplay.style.transform = 'translateY(0)';
+          }, 600);
+        } 
+        else if (currentMessageIndex === messages.length - 1) {
+          // last poem shown, now show apology message
+          messageDisplay.style.opacity = '0';
+          messageDisplay.style.transform = 'translateY(18px)';
+          setTimeout(() => {
+            messageDisplay.innerText = apologyMessage;
+            messageDisplay.style.opacity = '1';
+            messageDisplay.style.transform = 'translateY(0)';
+            continueBtn.classList.add('hidden'); // no more continue
+            // Trigger background apology animation (tears etc)
+            showApologyParticles();
+          }, 600);
+          currentMessageIndex++; // prevent re-trigger
+        }
+        // else do nothing
+      });
+    })();
+  </script>
+</body>
+</html>
